@@ -15,14 +15,19 @@ public interface CustomerRestClient {
     Customer getCustomerById(@PathVariable Long id);
 
     @GetMapping("/customers")
+    @CircuitBreaker(name="customerService", fallbackMethod ="allCustomers")
     List<Customer> getAllCustomers();
 
     default Customer getDefaultCustomer(Long id, Exception exception){
         Customer customer = new Customer();
-        customer.setCustomerId(id);
+        customer.setId(id);
         customer.setFirstName("Not Available");
         customer.setLastName("Not Available");
         customer.setEmail("Not Available");
         return customer;
+    }
+
+    default List<Customer> allCustomers(Exception exception){
+        return List.of();
     }
 }

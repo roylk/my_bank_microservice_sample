@@ -21,7 +21,12 @@ public class AccountRestController {
     }
     @GetMapping("/accounts")
     public List<BankAccount> getAllBankAccount(){
-        return accountRepository.findAll();
+        List<BankAccount> accountList =accountRepository.findAll();
+        accountList.forEach(acc-> {
+            acc.setCustomer(customerRestClient.getCustomerById(acc.getCustomerId()));
+        });
+        //return accountRepository.findAll();
+        return accountList;
     }
 
     @GetMapping("/accounts/{id}")

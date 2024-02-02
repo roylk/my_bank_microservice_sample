@@ -1,5 +1,6 @@
 package com.roger.accountservice;
 
+import com.roger.accountservice.clients.CustomerRestClient;
 import com.roger.accountservice.enums.AccountType;
 import com.roger.accountservice.repositories.AccountRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -21,9 +22,33 @@ public class AccountServiceApplication {
     }
 
     @Bean
-    CommandLineRunner commandLineRunner(AccountRepository accountRepository){
+    CommandLineRunner commandLineRunner(AccountRepository accountRepository, CustomerRestClient customerRestClient){
         return args -> {
-            BankAccount account1 = BankAccount.builder()
+
+            customerRestClient.getAllCustomers().forEach(c ->{
+                BankAccount account1 = BankAccount.builder()
+                        .accountId(UUID.randomUUID().toString())
+                        .balance(Math.random()*5436)
+                        .currency("EURO")
+                        .createdAt(LocalDate.now())
+                        .type(AccountType.CURRENT_ACCOUNT)
+                        .customerId(c.getId())
+                        //.customer(customerRestClient.getCustomerById(c.getId()))
+                        .build();
+                BankAccount account2 = BankAccount.builder()
+                        .accountId(UUID.randomUUID().toString())
+                        .balance(Math.random()*5843)
+                        .currency("EURO")
+                        .createdAt(LocalDate.now())
+                        .type(AccountType.SAVING_ACCOUNT)
+                        .customerId(c.getId())
+                        //.customer(customerRestClient.getCustomerById(c.getId()))
+                        .build();
+
+                accountRepository.save(account1);
+                accountRepository.save(account2);
+            });
+            /*BankAccount account1 = BankAccount.builder()
                     .accountId(UUID.randomUUID().toString())
                     .balance(86000)
                     .currency("EURO")
@@ -42,7 +67,7 @@ public class AccountServiceApplication {
                     .build();
 
             accountRepository.save(account1);
-            accountRepository.save(account2);
+            accountRepository.save(account2);*/
         };
 
     }
