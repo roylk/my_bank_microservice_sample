@@ -1,0 +1,54 @@
+services:
+  my_bank-discovery-ms:
+    build: ./discovery-service
+    container_name: my_bank-discovery-ms
+    ports:
+      - '8761:8761'
+    expose:
+      - '8761'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      retries: 4
+  my_bank-config-ms:
+    build: ./config-service
+    container_name: my_bank-config-ms
+    ports:
+      - '9999:9999'
+    expose:
+      - '9999'
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9999/actuator/health" ]
+      interval: 10s
+      retries: 4
+    depends_on:
+      my_bank-discovery-ms:
+        condition: service_healthy
+    environment:
+      - DISCOVERY_SERVICE_URL=http://my_bank-discovery-ms:8761/eureka
+  my_bank-customer-ms:
+    build: ./customer-service
+    container_name: my_bank-customer-ms
+    ports:
+      - '8081:8081'
+    expose:
+      - '8081'
+    environment:
+      - DISCOVERY_SERVICE_URL=http://my_bank-discovery-ms:8761/eureka
+      - CONFIG_SERVICE_URL=http://my_bank-config-ms:9999
+    depends_on:
+      my_bank-config-ms:
+        condition: service_healthy
+
+
+
+
+
+
+
+
+
+
+
+
+
