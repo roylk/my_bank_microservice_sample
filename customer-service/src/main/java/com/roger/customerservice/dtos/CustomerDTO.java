@@ -1,4 +1,4 @@
-package com.roger.customerservice.entities;
+package com.roger.customerservice.dtos;
 
 
 import jakarta.persistence.Entity;
@@ -8,13 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 
 
 @Getter @Setter @ToString @Builder @NoArgsConstructor @AllArgsConstructor
-@Entity
-public class Customer {
-    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+
+public class CustomerDTO {
     private Long id;
     @NotEmpty
     @Size(min=2)
